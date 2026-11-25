@@ -1,0 +1,30 @@
+{
+  "name": "@andrii2706/mr-ui",
+  "version": "0.2.0",
+  "description": "Бібліотека інтерфейсу платформи «Облік персоналу»: daisyUI + Angular CDK, WCAG 2.2 AA",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrii2706/mr-ui.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "peerDependencies": {
+    "@angular/cdk": "^22.2.0",
+    "@angular/common": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "daisyui": "^5.8.0",
+    "tailwindcss": "^4.1.0"
+  },
+  "exports": {
+    "./theme.css": {
+      "style": "./theme.css",
+      "default": "./theme.css"
+    }
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

@@ -1,0 +1,52 @@
+# Publishes @andrii2706/mr-ui to GitHub Packages (private) when a tag v* is pushed:
+#   1) set "version" in projects/ui/package.json and a section in projects/ui/CHANGELOG.md;
+#   2) git tag v0.2.0 && git push origin v0.2.0
+# The workflow's own GITHUB_TOKEN publishes — no personal tokens. Nothing but the built dist/ui goes into the package.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Опублікувати пакет
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@andrii2706'
+      - run: npm ci
+      - name: Тег збігається з версією пакета
+        run: |
+          version=$(node -p "require('./projects/ui/package.json').version")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Тег $GITHUB_REF_NAME, а у projects/ui/package.json — $version"
+            exit 1
+          fi
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+      - name: У пакеті лише збірка (без .env, тестів і галереї)
+        run: |
+          files=$(npm pack ./dist/ui --dry-run --json | node -p "JSON.parse(require('fs').readFileSync(0)).flatMap(p => p.files.map(f => f.path)).join('\n')")
+          echo "$files"
+          if echo "$files" | grep -Eq '(\.env|\.spec\.|gallery/)'; then
+            echo "::error::У пакет потрапили зайві файли"
+            exit 1
+          fi
+      - run: npm publish ./dist/ui
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

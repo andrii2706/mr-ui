@@ -1,0 +1,57 @@
+@import 'tailwindcss';
+@source '../../ui/src';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+/* the library, as an application imports it */
+@import '../../ui/src/theme.css';
+
+/* the tokens the applications keep themselves (the same in all four) */
+@theme {
+  --font-sans: 'Geist Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+  --color-canvas: #f7f7f4;
+  --color-surface: #ffffff;
+  --color-sunken: #f0efe9;
+  --color-line: #e4e3dc;
+  --color-ink: #1b1f17;
+  --color-muted: #5d6356;
+}
+
+@layer base {
+  html {
+    font-size: 15px;
+  }
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+}
+
+/* the buttons and cards of the applications (stage 4 moves them to daisyUI) — here to show the library on them */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-[10px] px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-primary-content);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-accent);
+  }
+  .btn-secondary {
+    @apply border border-line bg-surface text-ink hover:bg-sunken;
+  }
+  .btn-sm {
+    @apply gap-1.5 rounded-lg px-3 py-1.5 text-[13px];
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+  }
+  .input {
+    @apply block w-full rounded-[10px] border bg-surface px-3 py-2 text-sm text-ink focus:outline-none;
+  }
+  .input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+}

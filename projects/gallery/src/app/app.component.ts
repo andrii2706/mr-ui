@@ -5,6 +5,7 @@ import {
   A11ySettingsService,
   UiAppIconComponent,
   UiLongActionHostComponent,
+  UiActivityHostComponent,
   UiSkipLinkComponent,
   type AppIconId,
 } from '@mr/ui';
@@ -20,6 +21,7 @@ import { MODULES, NAV } from './shared/gallery.constants';
     RouterLinkActive,
     UiSkipLinkComponent,
     UiLongActionHostComponent,
+    UiActivityHostComponent,
     UiAppIconComponent,
   ],
   template: `
@@ -95,6 +97,7 @@ import { MODULES, NAV } from './shared/gallery.constants';
       </div>
     </div>
     <ui-long-action-host />
+    <ui-activity-host />
   `,
 })
 export class AppComponent {
@@ -102,7 +105,7 @@ export class AppComponent {
   protected readonly a11y = inject(A11ySettingsService);
   protected readonly nav = NAV;
   protected readonly modules = MODULES;
-  protected readonly version = '0.1.0';
+  protected readonly version = '0.3.0';
   protected readonly theme = signal<AppIconId>('projects');
 
   protected setTheme(id: AppIconId) {

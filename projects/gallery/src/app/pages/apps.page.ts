@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { UiActivityService, UiAppSwitcherComponent } from '@mr/ui';
 
 /** Where the library lives now: what each application uses, how a new version reaches them, what changed. */
 @Component({
   selector: 'app-apps-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [UiAppSwitcherComponent],
   template: `
     <h1 class="text-[26px] font-semibold">Застосунки</h1>
     <p class="mt-1 mb-6 max-w-[720px] text-muted">
@@ -13,6 +15,37 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <code class="font-mono">from '&#64;mr/ui'</code>; копій у
       <code class="font-mono">src/mr-ui</code> більше немає.
     </p>
+
+    <section class="card mb-6 grid gap-6 p-5 md:grid-cols-[260px_1fr]" aria-labelledby="ap-switch">
+      <div>
+        <h2 id="ap-switch" class="mb-3 text-sm font-semibold">
+          Перемикач · угорі меню кожного застосунку
+        </h2>
+        <ui-app-switcher current="kadry" />
+        <p class="mt-2 text-xs text-muted">
+          Без сесії порталу — лише «Портал»; з нею — ще відкриті модулі акаунта.
+        </p>
+      </div>
+      <div>
+        <h2 class="mb-3 text-sm font-semibold">Лоадери переходу й дії</h2>
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            class="btn cursor-pointer"
+            (click)="leave('Військовий облік', 'oblik')"
+          >
+            Заставка: у модуль
+          </button>
+          <button type="button" class="btn cursor-pointer" (click)="leave('Портал', 'portal')">
+            Заставка: на портал
+          </button>
+          <button type="button" class="btn cursor-pointer" (click)="act()">Смужка дії · 2 с</button>
+        </div>
+        <p class="mt-2 text-xs text-muted">
+          Заставка тут зникає сама за 3 с — у застосунку її змінює наступна сторінка.
+        </p>
+      </div>
+    </section>
 
     <section class="card overflow-x-auto" aria-labelledby="ap-use">
       <h2 id="ap-use" class="px-5 pt-4 pb-2 text-sm font-semibold">
@@ -92,7 +125,19 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   `,
 })
 export class AppsPage {
-  protected readonly version = '0.1.0';
+  private readonly activity = inject(UiActivityService);
+
+  protected leave(title: string, app: 'oblik' | 'portal') {
+    this.activity.leave(title, app);
+    setTimeout(() => this.activity.stay(), 3000);
+  }
+
+  protected act() {
+    const end = this.activity.begin();
+    setTimeout(end, 2000);
+  }
+
+  protected readonly version = '0.3.0';
   protected readonly columns = [
     'uiBusy',
     'ui-page-loader',
@@ -131,6 +176,7 @@ export class AppsPage {
     'git rm scripts/sync.mjs',
   ].join('\n');
   protected readonly changes = [
+    '0.3.0 — перемикач застосунків ui-app-switcher, заставка переходу [uiLeave], смужка дій uiActivityInterceptor, ui-activity-host.',
     'Пакет @andrii2706/mr-ui у GitHub Packages (приватний): застосунки ставлять його як @mr/ui, копії src/mr-ui і scripts/sync.mjs прибрано.',
     'Поле дати й часу ui-date-input (ДД.ММ.РРРР, календар з місяцями й роками, години) і таймер бездіяльності UiIdleService + ui-idle-host.',
     'Високий контраст: білий ґрунт, темніші підписи, сірі рамки (#8a8e82) замість чорних обведень карток, бейджів і вкладок.',

@@ -62,3 +62,21 @@ npm run sync -- ../projects   # скопіювати в застосунок
 - 2 — поля: date-input, select, combobox, form-field;
 - 3 — файли: завантаження, бланк, налаштування списків, аркуші наклейок, сортований список, мітки шаблонів, підпис КЕП;
 - 4 — застосунки переходять на класи daisyUI.
+
+## Перемикач застосунків і лоадери переходів та дій (0.3.0)
+
+```ts
+// app.config.ts
+provideHttpClient(withInterceptors([apiInterceptor, uiActivityInterceptor]));
+```
+
+```html
+<!-- shell: угорі меню — інші застосунки; один раз у shell — лоадери -->
+<ui-app-switcher current="kadry" />
+<ui-activity-host />
+
+<!-- будь-яке посилання в інший застосунок (портал, плитка модуля) -->
+<a href="/api/portal/sso/oblik" uiLeave="Військовий облік" uiLeaveApp="oblik">…</a>
+```
+
+Перехід через код (вихід, бездіяльність): `inject(UiActivityService).leave('Портал', 'portal')` перед `location.assign(...)`.
